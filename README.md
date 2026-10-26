@@ -53,7 +53,12 @@ Anthropic.
 
 ## Install
 
-There is no prebuilt download yet: build the installer from source (see
+**The easy way:** give [INSTALL-WITH-CLAUDE.txt](INSTALL-WITH-CLAUDE.txt) to Claude Code (or any
+Claude that can run commands on your PC) and say *"Install and open Clawd using this file."* Claude
+checks what your PC is missing, asks you once, then installs the tools, builds Clawd, installs it,
+pulls the local AI model and opens him.
+
+**By hand:** there is no prebuilt download yet: build the installer from source (see
 [Build from source](#build-from-source)); `npm run dist` writes `dist\Clawd-Setup-0.1.0.exe`. It
 installs for your user only (no admin rights) and starts Clawd. The installer is **not
 code-signed**, so Windows SmartScreen may warn on first run: choose **More info → Run anyway**.

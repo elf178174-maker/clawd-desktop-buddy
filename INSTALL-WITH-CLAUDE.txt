@@ -1,0 +1,121 @@
+CLAWD: INSTALL WITH CLAUDE
+==========================
+
+Hand this file to Claude Code (or any Claude that can run commands on your Windows PC) and say:
+
+    Install and open Clawd using this file.
+
+Claude checks what your PC needs, asks you once before installing anything, builds Clawd from
+source, installs it and opens it. It takes about 10-20 minutes, most of it downloads.
+
+What can get installed (only what is missing):
+  - Git, Node.js LTS and Ollama, through winget
+  - Clawd's npm packages (about 700 MB) and the Clawd app itself (per-user, no admin rights)
+  - Ollama's qwen3.5:4b model (3.3 GB), the local AI that answers you
+
+Clawd is an unofficial fan project; it is not affiliated with or endorsed by Anthropic.
+Source: https://github.com/elf178174-maker/clawd-desktop-buddy
+
+
+-------------------------------------------------------------------------------------------------
+INSTRUCTIONS FOR CLAUDE
+-------------------------------------------------------------------------------------------------
+
+Your job: install Clawd, a pixel-art desktop companion for Windows, from
+https://github.com/elf178174-maker/clawd-desktop-buddy, and open it. Run every command yourself,
+check each result before moving on, and tell the user what is happening in short plain sentences.
+Commands below are PowerShell.
+
+GROUND RULES
+  - Windows 10 or 11, 64-bit only. If the PC is anything else, stop and say Clawd needs Windows.
+  - Before installing or downloading anything, tell the user exactly what is missing and what you
+    will install (names and sizes from the list above; winget accepts each package's license for
+    them), and wait for one clear yes. If they decline Ollama, carry on without it (step 4 says how).
+  - Never ask for, type or store API keys or passwords. A hosted AI model is optional; the user
+    enters its key in Clawd's own Settings, where it is stored encrypted.
+  - Do not edit the user's Claude Code settings. Clawd's Claude Code hooks are optional and the
+    user adds them from Clawd's Settings (step 6).
+  - Do not run Clawd's end-to-end tests (`npm run test:e2e`): they take over the desktop.
+  - If a step fails twice, stop and show the user the error instead of improvising workarounds.
+
+STEP 1: CHECK WHAT IS THERE
+  (Get-CimInstance Win32_OperatingSystem).Caption
+  [Environment]::Is64BitOperatingSystem                 # must be True
+  winget --version                                      # needed for installs; comes with Windows
+  git --version
+  node --version                                        # needs v22 or newer
+  ollama --version
+  Test-Path "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\csc.exe"   # must be True
+
+  The last one is the C# compiler that ships with Windows (.NET Framework 4.x); Clawd's small native
+  helper is compiled with it. If it is False, stop: the user needs .NET Framework 4.8 turned on in
+  "Turn Windows features on or off".
+
+  Then ask the user for the go-ahead (see GROUND RULES), listing only what is missing.
+
+STEP 2: INSTALL WHAT IS MISSING
+  winget install --id Git.Git -e --source winget --accept-package-agreements --accept-source-agreements
+  winget install --id OpenJS.NodeJS.LTS -e --source winget --accept-package-agreements --accept-source-agreements
+  winget install --id Ollama.Ollama -e --source winget --accept-package-agreements --accept-source-agreements
+
+  Run only the lines for missing tools (also Node.js if it is older than v22). New installs are not
+  on this shell's PATH yet, so refresh it, then re-check the versions from step 1:
+  $env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')
+
+STEP 3: GET THE CODE AND BUILD THE INSTALLER
+  If the current folder already is this repository (its package.json has "name": "clawd-companion"),
+  use it. Otherwise:
+  $dir = "$env:USERPROFILE\clawd-desktop-buddy"
+  if (Test-Path "$dir\.git") { git -C $dir pull } else { git clone https://github.com/elf178174-maker/clawd-desktop-buddy.git $dir }
+  Set-Location $dir
+
+  npm ci
+  npm run dist
+
+  `npm ci` downloads Electron and the speech engine (a few minutes). `npm run dist` compiles the
+  native helper, builds the app and writes the installer to dist\Clawd-Setup-<version>.exe (the
+  first run also downloads the installer tooling). Run them with a long timeout (10 minutes each)
+  and check that the installer exists:
+  Get-ChildItem dist\Clawd-Setup-*.exe
+
+STEP 4: THE LOCAL AI MODEL
+  ollama pull qwen3.5:4b
+  ollama list                                           # should show qwen3.5:4b
+
+  If `ollama` says it cannot connect, start it and try again:
+  Start-Process ollama -ArgumentList serve -WindowStyle Hidden
+  If the user declined Ollama, skip this step: Clawd still opens, and Settings > AI lets them pick
+  a hosted model (OpenAI, Anthropic, Gemini or any OpenAI-compatible server) and enter its key.
+
+STEP 5: INSTALL AND OPEN
+  $setup = (Get-ChildItem dist\Clawd-Setup-*.exe | Sort-Object LastWriteTime | Select-Object -Last 1).FullName
+  Start-Process $setup -Wait
+
+  The installer is per-user (no admin rights), installs to
+  %LOCALAPPDATA%\Programs\clawd-companion and starts Clawd when it finishes. It is not code-signed:
+  if Windows SmartScreen appears, the user chooses More info > Run anyway. Then check:
+  Start-Sleep 10; Get-Process Clawd -ErrorAction SilentlyContinue
+
+  If Clawd is not running, start it:
+  Start-Process "$env:LOCALAPPDATA\Programs\clawd-companion\Clawd.exe"
+
+STEP 6: TELL THE USER HOW TO USE HIM
+  - Clawd sits at the bottom-right of the screen and waves hello.
+  - Summon him with Ctrl + Alt + Space, or double-click him. If another app already owns that
+    shortcut, Clawd picks Ctrl + Alt + C instead and says so.
+  - The first time, he asks whether you want to talk. "Download" fetches his speech models
+    (about 620 MB, all local). You can also just type.
+  - Optional, all in his Settings (right-click Clawd or use the tray icon):
+      Browser extension: Integrations > Browser (read pages, refine Reddit comments)
+      Claude Code: Integrations > Claude Code > Install hooks
+      Start with Windows: General
+  - To remove him: Windows Settings > Apps > Installed apps > Clawd > Uninstall.
+
+TROUBLESHOOTING
+  - `npm ci` fails with network errors: run it once more; if it fails again, show the error.
+  - `npm run dist` fails at build:native: the csc.exe check in step 1 was False.
+  - `npm run dist` fails extracting "winCodeSign" with "A required privilege is not held": ask the
+    user to turn on Developer Mode (Settings > System > For developers), or to run the terminal
+    once as administrator, then run `npm run dist` again.
+  - Clawd says the AI model is not running: start Ollama (step 4), then press Try again in his
+    panel.
