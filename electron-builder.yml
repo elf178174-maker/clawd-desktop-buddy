@@ -1,0 +1,40 @@
+# Windows installer: a per-user NSIS setup (no admin rights), unsigned.
+# Speech models are not bundled; Clawd downloads them on first use (Settings > Voice).
+appId: app.clawd.companion
+productName: Clawd
+copyright: Fan-made, not affiliated with Anthropic
+directories:
+  output: dist
+files:
+  - out/**
+  - package.json
+  - "!**/*.map"
+# Bundled resources live in resources/app-resources (see src/main/paths.ts).
+extraResources:
+  - from: resources
+    to: app-resources
+    filter: ["**/*", "!reference/**"]
+  - from: native/bin/clawd-native.exe
+    to: native/clawd-native.exe
+# Native speech engine: the .node addon and its DLLs must load from disk, not from the asar.
+asarUnpack:
+  - node_modules/sherpa-onnx-node/**
+  - node_modules/sherpa-onnx-win-x64/**
+npmRebuild: false
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  icon: resources/icon.ico
+  executableName: Clawd
+nsis:
+  oneClick: true
+  perMachine: false
+  allowElevation: false
+  runAfterFinish: true
+  createDesktopShortcut: false
+  createStartMenuShortcut: true
+  shortcutName: Clawd
+  uninstallDisplayName: Clawd
+  artifactName: Clawd-Setup-${version}.exe
+  deleteAppDataOnUninstall: false

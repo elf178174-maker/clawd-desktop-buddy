@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Clawd</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f6f3ee;
+        --text: #1d1b18;
+        --muted: #6e6a62;
+        --border: #e2dcd2;
+        --accent: #c2603d;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #141312;
+          --text: #eeeae3;
+          --muted: #a39e93;
+          --border: #33302b;
+          --accent: #d77757;
+        }
+      }
+      body {
+        margin: 0;
+        width: 300px;
+        padding: 14px;
+        font: 13px/1.45 'Segoe UI', system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      header img {
+        width: 24px;
+        image-rendering: pixelated;
+      }
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #c0882a;
+      }
+      .dot.ok {
+        background: #5b9a3c;
+      }
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        height: 30px;
+        padding: 0 8px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text);
+        font-family: Consolas, monospace;
+        font-size: 11px;
+      }
+      button {
+        margin-top: 8px;
+        height: 30px;
+        width: 100%;
+        border: 0;
+        border-radius: 6px;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      p {
+        color: var(--muted);
+        font-size: 12px;
+        margin: 10px 0 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header><img src="icons/48.png" alt="" /><strong>Clawd</strong></header>
+    <div class="status"><span id="dot" class="dot"></span><span id="status">Checking…</span></div>
+    <label for="code">Pairing code (Clawd Settings › Integrations)</label>
+    <input id="code" placeholder="47913:abc…" autocomplete="off" spellcheck="false" />
+    <button id="pair">Connect</button>
+    <p>Clawd only reads a page when you ask him about it. Everything stays between this browser and Clawd on this PC.</p>
+    <script src="popup.js"></script>
+  </body>
+</html>

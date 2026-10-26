@@ -1,0 +1,12 @@
+node_modules/
+out/
+dist/
+models/
+native/bin/
+*.log
+.test-data/
+tests/e2e/shots/
+tools/.sheet-build/
+.cache/
+.env
+.env.*

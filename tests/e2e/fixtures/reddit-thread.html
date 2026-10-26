@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Should I learn Rust or Go first? : r/learnprogramming</title>
+    <style>
+      body { font: 14px system-ui; background: #0e1113; color: #d7dadc; margin: 0; }
+      header { height: 48px; border-bottom: 1px solid #333; padding: 12px; }
+      main { max-width: 760px; margin: 20px auto; }
+      shreddit-comment { display: block; margin: 12px 0 12px calc(var(--d, 0) * 20px); }
+    </style>
+  </head>
+  <body>
+    <header>reddit · Search · Log In · Get app · Advertise · Popular · Explore · Topics · Resources</header>
+    <main>
+      <shreddit-post post-title="Should I learn Rust or Go first?" author="curious_dev42" subreddit-prefixed-name="r/learnprogramming" score="214">
+        <div slot="text-body">
+          <p>I'm a self-taught Python developer (about 2 years) and want to pick up a compiled language for backend work and CLI tools. Everyone at work says Go, but Rust keeps showing up in job posts and I like the idea of memory safety.</p>
+          <p>Which one would you learn first, and why? I have maybe 5 hours a week.</p>
+        </div>
+      </shreddit-post>
+      <aside>Promoted · Try Shopify free for 3 days · Learn more</aside>
+      <shreddit-comment author="gopher_gal" depth="0" score="187" style="--d:0">
+        <div slot="comment"><p>Go. You'll be productive in a week. The standard library covers HTTP servers and CLIs really well, and the tooling (go fmt, go test) is dead simple.</p></div>
+        <shreddit-comment author="ferris_fan" depth="1" score="96" style="--d:1">
+          <div slot="comment"><p>Counterpoint: Rust teaches you things about ownership that make you a better programmer in any language. The first month hurts though.</p></div>
+        </shreddit-comment>
+      </shreddit-comment>
+      <shreddit-comment author="old_backend_guy" depth="0" score="64" style="--d:0">
+        <div slot="comment"><p>With 5 hours a week I'd pick Go. Rust is great but you need longer uninterrupted blocks to get over the hump.</p></div>
+      </shreddit-comment>
+      <comment-composer id="composer"></comment-composer>
+    </main>
+    <script>
+      // A composer with its editor inside a shadow root, like Reddit's.
+      customElements.define('comment-composer', class extends HTMLElement {
+        connectedCallback() {
+          const root = this.attachShadow({ mode: 'open' })
+          root.innerHTML = '<div contenteditable="true" role="textbox" aria-label="Add a comment" style="min-height:60px;border:1px solid #444;padding:8px"></div><button type="button">Comment</button>'
+          root.querySelector('button').addEventListener('click', () => { window.__posted = true })
+        }
+      })
+    </script>
+  </body>
+</html>

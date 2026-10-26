@@ -1,0 +1,36 @@
+{
+  "base": "https://github.com/k2-fsa/sherpa-onnx/releases/download",
+  "models": [
+    {
+      "id": "kws",
+      "label": "Wake word (\"Hey Clawd\")",
+      "url": "kws-models/sherpa-onnx-kws-zipformer-gigaspeech-3.3M-2024-01-01.tar.bz2",
+      "dir": "sherpa-onnx-kws-zipformer-gigaspeech-3.3M-2024-01-01",
+      "check": "tokens.txt",
+      "sizeMB": 17.6
+    },
+    {
+      "id": "vad",
+      "label": "Voice activity detection",
+      "url": "asr-models/silero_vad.onnx",
+      "file": "silero_vad.onnx",
+      "sizeMB": 0.6
+    },
+    {
+      "id": "stt",
+      "label": "Speech recognition (Moonshine base, English)",
+      "url": "asr-models/sherpa-onnx-moonshine-base-en-int8.tar.bz2",
+      "dir": "sherpa-onnx-moonshine-base-en-int8",
+      "check": "tokens.txt",
+      "sizeMB": 250.8
+    },
+    {
+      "id": "tts",
+      "label": "Clawd's voice (Kokoro)",
+      "url": "tts-models/kokoro-multi-lang-v1_0.tar.bz2",
+      "dir": "kokoro-multi-lang-v1_0",
+      "check": "voices.bin",
+      "sizeMB": 349.9
+    }
+  ]
+}
